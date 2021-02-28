@@ -75,6 +75,3 @@ if __name__== "__main__":
     result = job_search(job_title,location,driver)
 
     create_excel_file(result)  
-#print(data)
-
-#print(soup)
