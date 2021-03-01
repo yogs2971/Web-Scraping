@@ -5,6 +5,7 @@ from selenium import webdriver
 import pandas as pd
 import os
 import time
+from datetime import date
 
 
 
@@ -56,15 +57,51 @@ def job_search(job_title,position,driver):
 
     return df
 
-def create_excel_file(df):
-    
-    TodaysDate = time.strftime("%d-%m-%Y")
-    excelfilename = "/home/yogs/Documents/Naukari_Dot_com_Data/"+TodaysDate +"_Naukari_Dot_Com.xlsx"
 
-    df.to_excel(excelfilename, sheet_name=TodaysDate, index=False)
-    # today = date.today()
-    # today_format = today.strftime("%d-")+today.strftime("%b-")+today.strftime("%Y")
-    # df.to_excel("/home/yogs/Documents/Naukari_Dot_com_Data/Naukari_     ")
+def create_folder():
+
+    file_path = os.path.abspath(__file__)
+    # print(file_path)
+
+    parent_dir = os.path.dirname(file_path)
+    # print(parent_dir)
+
+    today = date.today()
+    today_format = today.strftime('%d-')+today.strftime('%b-')+today.strftime('%Y')
+    
+    folder_name = str(today_format)
+    # print(folder_name)
+
+    path = os.path.join(parent_dir,folder_name)
+    print(path)
+
+    isdir = os.path.isdir(path)
+    print(isdir)
+
+    k = 1
+
+    while(isdir):
+        print(isdir)
+
+        temp = path
+        temp = temp+str("_"+str(k))
+        k = k+1
+        isdir = os.path.isdir(temp)
+        print(isdir)
+        if isdir==False:
+            path = temp
+
+    print(path)
+    os.mkdir(path)
+    print(path)
+    # print(path)
+    return path
+
+def create_excel(df,path):
+
+    excel_filename = path+"/Naukari_Dot_Com.xlsx"
+    print(excel_filename)
+    df.to_excel(excel_filename, index=False)
 
 if __name__== "__main__":
 
@@ -72,6 +109,9 @@ if __name__== "__main__":
     location = input("Location >")
     location_of_driver = "/usr/bin"
     driver = webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver"))
-    result = job_search(job_title,location,driver)
 
-    create_excel_file(result)  
+    data = job_search(job_title,location,driver)        #function for scraping website
+
+    path = create_folder()                              #function for creating folder
+    
+    create_excel(data,path)                             #function excel for storing data
